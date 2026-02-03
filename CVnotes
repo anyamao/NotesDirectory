@@ -10,3 +10,18 @@ install stuff with pip install
 pip install opencv-contrib-python
 pip  install caer
 
+
+since i use wsl i needed to also install and configure Xlaunch, because otherwise the popup
+would not work. 
+to check the popup you can run this:
+
+import cv2 as cv 
+img = cv.imread("catimg.jpg")
+
+if img is None:
+  print("image not found")
+else:
+  cv.imshow("cat",img)
+  cv.waitKey(0)
+
+for now if the image is large it will go off screen
