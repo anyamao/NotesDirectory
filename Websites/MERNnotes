@@ -1,0 +1,151 @@
+---When wanting to start a MERN  app-------------------------------------------------
+you need to split your parent folder, a git repo, into two folders
+1)client
+2)server
+and the gitignore should be only one and stay in the parent folder
+then while you dont have any server you npm run dev from the client
+when you have a server you first npm run dev from server and then from client.
+
+------------------------------------------------------------------------------------------
+
+
+---Basic terminology--------------
+
+in MERN stack we use MondoDB for database
+Express as web framework to simplify routing etc (Nest.js and Next.js can be used instead)
+React as a javascript framework
+Node.js to run javascript on server
+
+-----------------------------------------------
+
+
+---Building a server-------------------------------------------
+
+we are implementing non-persistent database now with restapi
+
+in server folder you npm init -y to add package.json
+in this package.json in type you set module
+
+then while still in server folder you make server.js like this:
+
+import http from 'https';
+
+const server =http.createServer((req,res) =>{
+    res.writeHead(200, {"Content-Type":"text/plain"});
+    res.end('You just built a server!');
+  });
+
+server.listen(3000, console.log('The server is running'));
+
+to check if it all works you node server.js in server folder. should output the server is running. for now its only nodejs server
+
+to make it express server you first npm install express then write this in server.js:
+
+import express from 'express';
+
+const app = express();
+const port = 3000;
+
+app.get("/",(req,res)=>{
+    res.send('hello from express api!');
+  })
+
+app.listen(port,console.log(`server is running on port ${port}`));
+
+
+and it should output server is running on port 3000
+also if you go on localhost:3000 you should see the hello from express api message
+
+so you can
+1) app.get to ask for data
+2) app.post to add new data
+3) app.put to update existing data "/cars:id"
+4) app.delete to delete existing data "/cars:id"
+
+you can write "/cars/base/" for each app, but we can define a router to use the same beginning automatically
+
+under port = 3000; add
+const router = express.Router();
+
+and then instead of app.post you write
+router.post('/'...)
+and you only write the not repeating part of '/' in there
+
+and before app.listen you add
+app.use('/api/v1',router);
+
+but your first app.get("/")...
+hello from express
+should stay on app and not on router
+---------------------------------------------------------------------------------------
+
+---Data operations-----------------------
+
+1) Adding data as array
+
+
+first to try it out you can make an array like this:
+
+let cars = [
+{id:1, name:"anya", country:"not stated"},
+{id:2, name"katya", country:"germany"},
+],
+
+before let cars you add app.use(express.json()) to make your let an actual data
+
+to check the data you can edit one router to
+
+roter.get("/cars",(req,res)=>{
+    res.send(cars);
+  })
+
+and when you go on localhost:3000/cars you should see the let cars in json format
+
+when you want to get one piece of data by id 
+
+router.get("/cars/:id",(req,res)=>{
+    const id = Number(req.params.id);
+    const car = cars.find((car) => car.id ==id);
+    if (!car) reutrn res.status(404).send("car not found!");
+
+    res.json(car);
+  });
+
+if you want to add a new car
+
+Well, tbh i still feel lost in APIs so i need more time to actually undestand it.
+But after adding router.use for different cases you add middleware
+then its time to add a database to store the data we are adding.
+we are using posgresql.
+
+now you use database offline but when deploying you should host a database with a cloud provider
+like azure postrgres or AWS RDS or Railway
+
+---Postgresql---------------------
+
+You can install it directly into wsl. then you can make your user a postgresql user.
+To test it you can make an sql file and nvim into it and then run it with
+psql -d testdb -f schema.sql          schema.sql is the name of the sql file you want to run
+also periodically you should dump your postgress with this command
+
+pg_dump -U postgres testdb > backup.sql
+
+in this file you can add this to check
+
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users(
+id SERIAL PRIMARY KEY,
+name TEXT NOT NULL,
+email TEXT UNIQUE
+);
+INSERT INTO users(name,email)
+VALUES ('this','that@gmail.com');
+
+SELECT * FROM users;
+
+and it should output the values;
+
+Now how can you cinnect nodejs and postgres? 
+I will use drizzle. 
+You need to navigate into your backend folder.

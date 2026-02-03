@@ -1,0 +1,309 @@
+Nothing bad with using Vite for react web app creation.
+Also you need nodejs to write code outside of the browser
+
+
+
+---Basic structure notes------------------------------------------------------
+
+tsconfig.json is a file that stores dependencies, you cant comment here
+
+package-lock.json file that locks all the versions used in this projects so when another
+person tries to run it it will install these same versions, ensuring it will work
+
+index.html in this file you have <div id="root"></div> this is the entry point
+of vite, here all the web application goes.
+<script type ="module" src = "/src/main.tsx"></script> this is the script for initializing
+your application
+
+eslint.config.js - config to add settings to eslint, a tool for finding problems in the code
+
+node_modules - is a folder that contains all the installed dependencies, thats why its so huge,
+its managed by npm
+
+folder public - a special folder for  statis assets like images and icons, and files here can be acessed
+with a special path, for example if we have cat.img i can acess it from each file as /cat.img 
+
+folder src - the folder where you keep all the scripts and documents with code, not images
+
+App.tsx - the main UI component of the web app. you use it to import the components. so it will look like
+
+const App = () =>{
+    return(
+    <div  className = "...">
+
+      <Header/>
+      <MainContent/>
+      <Footer/>
+
+    </div>
+
+    )
+  }
+
+....
+
+
+main.tsx - the entry point of the react App, also there we import the main styles file index.css
+
+App.css is the styling file for App.tsx
+
+
+------------------------------------------------------------------------------
+
+
+
+
+
+---When wanting to create a react app--------------------------------
+
+1)cd into a parent folder of web projects and here run-    npm create vite@latest
+this is the basic command which will prompt the installer to ask you for a name and stack
+
+2) cd into the project you have now created and do -     npm install
+this command installs all the necessary dependencies to safely run the web app
+
+3) if you want to use tailwind the documentation may change i used the official tailwindcss guide for vite
+npm install @tailwincss/vite
+then import tailwindcss from '@tailwindcss/vite' to vite.config.js, remove the react plugin completely
+insert tailwindcss() where react() has been
+add @import "tailwindcss" to the index.css file
+try to test it just in case
+
+------------------------------------------------------------------------- 
+
+
+
+
+---Basic Components Syntax---------------------------------------------------------------
+
+you can make a component like
+function App(){
+    ....
+  }
+
+or you can with
+const App = ()=>{
+    ....
+  }
+
+you need to export it at the end with
+export default App
+to use a component inside another component you just
+
+const App = () =>{
+    return (
+    <Component/>
+    )
+  }
+
+But this will just display the same component over and over again. To make it 
+look different we use props, passing data from one comp to another through props.
+its better to make a separate interface for props like this
+
+interface ComponentProps {
+    title:string;
+    rating:number;
+    cost:number
+  }
+
+cost Component = () =>{
+    return (
+    <div>
+    {title}{rating}{cost}
+    </div>
+    )
+  }
+
+you can move Component into a separate file and add export default Component;
+and then you need to add import Component from './Component'; (name of the file component is in)
+
+and then you can import it to other components 
+ const App = () =>{
+    return (
+    <div>
+    <Component title="Star Wars" rating = {20} cost = {19}/>
+    </div>
+    )
+  }
+
+------------------------------------------------------------------------------
+
+
+---Styling rules-------------------------------------------------------------
+
+its nice to keep a design system to ensure elements dont look odd. first go to index.css and delete everything
+then for basics just
+you can use google color picker for nice HEX representation. to add tawildind classes you will repeat add @layer components
+
+then choose a font you want to use on google fonts and follow the instructions given there.
+
+
+@layer components {
+    .movie-div{
+        @apply bg-pink-300 rounded-[50px] hover:scale-125 transition-transform
+      }
+  }
+*{
+    color: #241a16
+    font-family: of choice;
+    font-size:12px;
+  }
+body{
+    width:100vw;
+    height:100vw;
+    min-height:100vw;
+    display:flex;
+  }
+
+also since App.tsx is the entry point of all the component you can add two parent divs in it like
+
+const App = () =>{
+    return (
+    <div className = "min-w-screen min-h-screen justify-center flex py-[20px]">
+    
+    </div>
+    )
+  }
+
+also to make reusable components you can make them in index.css or in any css file
+with
+@ layer component{
+    .window{
+        @apply w-[30px];
+      }
+  }
+
+you need to keep reusable text sizes and colors in a global file and the css files only used in a specific page in the page
+folder in pages
+---------------------------------------------------------------------
+
+
+---Organizing files-------------------------------------------------------------
+
+in src folder:
+you add components folder for reusable components like header/Footer
+you add pages folder where you make another folder for each page 
+and in the page folder you keep all the components used for this page plus the page component itself.
+like Timer.tsx TimerCreating.tsx timer.css
+---------------------------------------------------------------------------------
+
+---Use State and Use Effect--------------------------------------------------------
+
+to use use state you need to import it like this
+
+import {useState} from 'react'
+
+you use it inside a const like
+
+const Component = () =>{
+
+  const [hasLiked,setHasLiked] = useState(false);
+
+    return(
+    ....
+
+    <button onClick={() =>{
+        setHasLiked((prevState)=> !prevState);
+      }}
+    )
+  }
+
+  const [count,setCount] = useState(0);
+  
+
+you can add useEffect to where you imported useState
+
+then if you want to use useEffect you do this
+
+useEffect( ()=>{
+    console.log('smth')
+  }[count]);:\Users\Vika\Downloads
+this [count] means useEffect will only work when count changes, not always
+
+if you add empty [] it will run only once on the mounting of the component it is in, when reloading.
+
+------------------------------------------------------------------------------------------------
+
+
+---Routing----------------------------------------------------------------------------------------
+
+you need to first install the package
+
+npm install react-router-dom
+
+then you need to go to main.tsx and 
+
+import {createBrowserRoutr, RouterProvider} from 'react-router-dom';
+
+and add const router
+
+const router = createBrowserRouter([
+{
+    path:'/timer',
+    element:<Timer/>,
+  },
+  {
+      path:"*"
+      element: </NotFound/>  //this component is 404 error handler.
+    }
+])
+
+and inside strict mode you  add
+
+<StrictMode>
+<RouterProvider router={router}/>
+</StrictMode
+
+and then in your header or wherever you
+
+import {Link} from 'react-router-dom'
+
+and make a link component
+
+<Link to="/diary" className="...">.....</Link>
+
+
+
+
+----------------------------------------------------------------------------------------------
+
+---Using github------------------------------------------
+
+so if you screwed up you just        rm -rf .git          and it removes all the git stuff
+
+git init 
+git add .
+git commit -m "message"
+
+gh repo create 
+git remote add origin https://github.com/anyamao/repo.name
+git push -u origin master
+
+when want to update to the latst version - git pull origin master
+
+when prompted for a password
+
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+cat ~/.ssh/id_ed25519.pub - copy the key
+
+add the key to github settings ssh keys new ssh key
+
+ssh -T git@github.com    
+
+
+turns out you need to copy with ssh and then it will be ok
+
+so just git remote add-url origin git@github.com:username/repo.git
+
+---------------------------------------------------
+
+----Small things-----------------
+  to run a cpp file you should install cpp compiler first
+  then to run it while waiting for input run it like that 
+  g++ prefix.cpp -o prefix && ./prefix
+
+

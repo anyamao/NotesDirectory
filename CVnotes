@@ -1,0 +1,12 @@
+to install packages on python you need to create virtual environment
+in every project folder
+python -m venv .venv
+
+activate it before every pip install
+source .venv/bin/activate
+
+install stuff with pip install
+
+pip install opencv-contrib-python
+pip  install caer
+
